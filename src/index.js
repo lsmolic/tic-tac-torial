@@ -2,6 +2,15 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
+/*
+  
+  Following the FB tutorial:
+  
+    https://facebook.github.io/react/tutorial/tutorial.html
+
+*/
+
+
 // Controller Component Example 
 
 // class Square extends React.Component {
@@ -78,6 +87,7 @@ class Board extends React.Component {
   }
 
   render() {
+    // improved solution for calculating winner only once in logic
     const winner = this.calculateWinner(this.state.squares);
 
     let status;

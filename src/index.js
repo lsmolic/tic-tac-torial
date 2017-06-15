@@ -72,8 +72,9 @@ class Game extends React.Component {
     this.state = {
       gameHistory: [{
         squares: Array(9).fill(null),
-        winner: null
+        winner: null        
       }],
+      stepNumber: 0,
       xIsCurrentPlayer: true
     }
   }
@@ -105,31 +106,50 @@ class Game extends React.Component {
   }
 
   handleClick(i) {
+    const gameHistory = this.state.gameHistory.slice(0, this.state.stepNumber + 1);
     const currentGame = this.getCurrentGame();
     const squares = currentGame.squares.slice();
-    const winner = this.calculateWinner(squares);
+    let winner = null;
 
     // determine if we have a winner yet
     // this prevents bad clicks
-    if (winner || squares[i]) {
+    if (currentGame.winner || squares[i]) {
       return;
     }
 
     // adjust currentBoard
     squares[i] = this.state.xIsCurrentPlayer ? 'X' : 'O';
+    winner = this.calculateWinner(squares);
 
     // add new state to history
     this.setState({
-      gameHistory: this.state.gameHistory.concat([{
+      gameHistory: gameHistory.concat([{
         squares: squares,
-        winner: winner
+        winner: winner,        
       }]),
+      stepNumber: gameHistory.length,
       xIsCurrentPlayer: !this.state.xIsCurrentPlayer
     });
   }
 
+  jumpTo(step) {
+    this.setState({
+      stepNumber: step,
+      xIsCurrentPlayer: (step % 2) ? false : true
+    })
+  }
+
   render() {
     const currentGame = this.getCurrentGame();
+
+    const moves = this.state.gameHistory.map((step, move) => {
+      const description = move ? `Move #${move}` : 'Game start';
+      return ( 
+        <li key={move}>
+          <a href="#" onClick={() => this.jumpTo(move)}>{description}</a>
+        </li>
+      )
+    })
 
     let gameStatus;
     if (currentGame.winner){
@@ -148,7 +168,7 @@ class Game extends React.Component {
         </div>
         <div className="game-info">
           <div>{gameStatus}</div>
-          <ol>{/* TODO */}</ol>
+          <ol>{moves}</ol>
         </div>
       </div>
     )
